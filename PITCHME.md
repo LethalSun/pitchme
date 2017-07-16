@@ -1,25 +1,4 @@
+
+IOCP
 ---
-hello World!!
----
-```
-int main()
-{
-}
-```
----?gist=2131d3601f7431a4810b8defdd3efb1e
-the end:)
-
-Hello!
-
-+++
-
-Hola!
-
----
-
-Goodbye!
-
-+++
-
-Adiós!
-
+Overlapped IO : 지금까지 배웠던 소켓 통신은 동기방식의 소켓. 즉 IO를 요청하면 완료 될 때까지 기다려야했다.
