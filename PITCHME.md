@@ -45,7 +45,6 @@ LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine//콜백함수
 * 이것을 잘관리 해주는 것이 IOCP이다.
 ---
 #### 관련함수(1)
-### CreateIoCompletionPort
 ```c++
 HANDLE CreateIoCompletionPort (
 HANDLE FileHandle, // IOCP에 연결할 소켓의 핸들
@@ -77,22 +76,19 @@ DWORD NumberOfConcurrentThreads // IOCP를 생성할때는 최대 실행 스레�
 * PostQueuedCompletionStatus 함수를 이용하면 된다.
 ---
 #### 관련함수(2)
-### GetQueuedCompletionStatus
 ```c++
 BOOL GetQueuedCompletionStatus(
-HANDLE CompletionPort, // handle to completion port
-LPDWORD lpNumberOfBytes, // bytes transferred
-PULONG_PTR lpCompletionKey, // file completion key
-LPOVERLAPPED *lpOverlapped, // buffer
-DWORD dwMilliseconds // optional timeout value
+HANDLE CompletionPort, // 관심있는 IOCP포트의 핸들
+LPDWORD lpNumberOfBytes, // 전송된 바이트수
+PULONG_PTR lpCompletionKey, // 어떤 소켓에서 전송된것인지
+LPOVERLAPPED *lpOverlapped, // 오버렙드 구조체 포인터
+DWORD dwMilliseconds // 대기시간
 );
 ```
 +++
-* CompletionPort: 관심있는 IOCP포트
-* lpNumberOfBytes: 전송된 바이트수
-* lpCompletionKey: 어떤 소켓에서 전송된것인지
-* lpOverlapped: 오버렙드 구조체 포인터
-* dwMilliseconds: 대기시간 보통 무한대로 설정한다.
+* lpCompletionKey: 포인터 이므로 확장해서 이용 가능하다.
+* lpOverlapped: 포인터 이므로 확장해서 이용 가능하다.
+* dwMilliseconds:  보통 무한대로 설정한다.
 * PostQueuedCompletionStatus 함수는 마지막 대기 시간을 제외한 인자로 되어있다.
 ---
 ### 확장 Overlapped 구조체
@@ -146,10 +142,10 @@ struct SOCKETINFO
 * 이때 만약 PTL의 스레드가 동작하게 되면 다시 RTL로 돌아가게 되는데 이때 최대 개수를 초과 하게 된다.
 
 ---
-## 예제코드
-?gist=6ae3c1a35ed2bc9e1d31fefb024a36ac
+#### 예제코드
++++?gist=6ae3c1a35ed2bc9e1d31fefb024a36ac
 ---
-## 의문점들
+#### 의문점들
 
 * page locking에 의해서 문제가 생기면 어떻게 해결하는가
 * Accept 함수는 그대로인데 ...
