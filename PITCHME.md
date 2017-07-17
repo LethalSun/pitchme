@@ -1,3 +1,4 @@
+
 # IOCP
 ---
 ## Overlapped IO
@@ -34,6 +35,12 @@ ULONG_PTR CompletionKey, // completion key
 DWORD NumberOfConcurrentThreads // number of threads to execute concurrently
 );
 ```
++++
+
+* FileHandle: IOCP에 연결할 소켓의 핸들 혹은 INVALID_HANDLE_VALUE 값을 넣으면 IOCP생성
+* ExistingCompletionPort: 생성된 IOCP 핸들을 넣는다.
+* CompletionKey: 소켓과 연결된 키
+* NumberOfConcurrentThreads: IOCP를 생성할때는 최대 실행 스레드수 연결할때는 0
 ---
 ## IOCP의 구조(1)
 ### Device List
@@ -54,6 +61,25 @@ DWORD NumberOfConcurrentThreads // number of threads to execute concurrently
 * 물론 IOCP의 구조는 아니지만 대부분 이렇게 확장해서 사용한다.
 * 보통 Overlapped 구조체를 사용해서 관련 정보를 한꺼번에 관리 한다.
 * 구조체를 만들어서 Overlapped 구조체를 맨 앞에 두면 포인터 캐스팅으로 내가 정의한 구조체에 접근 할수 있다.
+---
+## 관련함수(2)
+### GetQueuedCompletionStatus
+```
+BOOL GetQueuedCompletionStatus(
+HANDLE CompletionPort, // handle to completion port
+LPDWORD lpNumberOfBytes, // bytes transferred
+PULONG_PTR lpCompletionKey, // file completion key
+LPOVERLAPPED *lpOverlapped, // buffer
+DWORD dwMilliseconds // optional timeout value
+);
+```
++++
+* CompletionPort: 관심있는 IOCP포트
+* lpNumberOfBytes: 전송된 바이트수
+* lpCompletionKey: 어떤 소켓에서 전송된것인지
+* lpOverlapped: 오버렙드 구조체 포인터
+* dwMilliseconds: 대기시간 보통 무한대로 설정한다.
+* PostQueuedCompletionStatus 함수는 마지막 대기 시간을 제외한 인자로 되어있다.
 ---
 ## IOCP의 구조(3)
 ### Waiting Thread Queue(LIFO)
@@ -86,5 +112,6 @@ DWORD NumberOfConcurrentThreads // number of threads to execute concurrently
 * 만약 최대 스레드 개수 만큼 동작하다가 하나의 스레드가  PTL로 들어가면 WTQ에서 하나의 스레드가 깨어나게 되고 또 최대스레드 수만큼 동작하게 된다.
 * 이때 만약 PTL의 스레드가 동작하게 되면 다시 RTL로 돌아가게 되는데 이때 최대 개수를 초과 하게 된다.
 
+---?gist=6ae3c1a35ed2bc9e1d31fefb024a36ac
+## 예제코드
 ---
-
