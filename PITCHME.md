@@ -45,23 +45,18 @@ DWORD NumberOfConcurrentThreads // number of threads to execute concurrently
 ---
 ## IOCP의 구조(1)
 ### Device List
-![GitHub Logo](/image/DeviceList.png)
+![Device List](/image/DeviceList.png)
 * 키를 이용해서 어떤 디바이스의(여기서는 소켓) 입출력 이완료 되었는지를 알수 있도록 한 자료구조.
 * 보통 CompletionKey는 소켓의 FD를 이용하거나 사용자가 정의한 구조체의 포인터를 이용한다.
 ---
 ## IOCP의 구조(2)
 ### IO Completion Queue
-//이미지
+![IO Completion Queue](/image/IO Completion Queue.PNG)
++++
 * 입출력이 완료된 IO의 결과를 저장하는 큐
 * 순서대로 전송길이, 관련소켓, Overlapped 구조체, 에러다.
 * 큐에서 결과를 받아오는 것 뿐만 아니라 보내는 것도 가능하다.
 * PostQueuedCompletionStatus 함수를 이용하면 된다.
-+++
-### 확장 Overlapped 구조체
-//이미지
-* 물론 IOCP의 구조는 아니지만 대부분 이렇게 확장해서 사용한다.
-* 보통 Overlapped 구조체를 사용해서 관련 정보를 한꺼번에 관리 한다.
-* 구조체를 만들어서 Overlapped 구조체를 맨 앞에 두면 포인터 캐스팅으로 내가 정의한 구조체에 접근 할수 있다.
 ---
 ## 관련함수(2)
 ### GetQueuedCompletionStatus
@@ -82,9 +77,28 @@ DWORD dwMilliseconds // optional timeout value
 * dwMilliseconds: 대기시간 보통 무한대로 설정한다.
 * PostQueuedCompletionStatus 함수는 마지막 대기 시간을 제외한 인자로 되어있다.
 ---
+### 확장 Overlapped 구조체
+```
+struct SOCKETINFO
+{
+	OVERLAPPED overlapped;
+	SOCKET sock;
+	char buf[BUFSIZE+1];
+	int recvbytes;
+	int sendbytes;
+	WSABUF wsabuf;
+};
+
+```
++++
+* 물론 IOCP의 구조는 아니지만 대부분 이렇게 확장해서 사용한다.
+* 보통 Overlapped 구조체를 사용해서 관련 정보를 한꺼번에 관리 한다.
+* 구조체를 만들어서 Overlapped 구조체를 맨 앞에 두면 포인터 캐스팅으로 내가 정의한 구조체에 접근 할수 있다.
+---
 ## IOCP의 구조(3)
 ### Waiting Thread Queue(LIFO)
-
+![Waiting Thread Queue(LIFO)](/image/Waiting Thread Queue.PNG)
++++
 * GetQueuedCompletionStatus 함수를 호출한 스레드가 들어가게 되는 큐
 * 큐라고 불리지만 실제로는 레지스터나 캐쉬, 메모리에 남아있는 정보를 계속 사용하는게 비용이 덜들기 때문에 가장 최근에 사용한 스레드를 계속 사용하기 위해서 LIFO로 동작한다.
 * WTQ에서 스레드는 기다리고 있다가 IO가 완료되면 GetQueuedCompletionStatus함수의 매개변수로 정보를 받아온다.
@@ -95,14 +109,14 @@ DWORD dwMilliseconds // optional timeout value
 ---
 ## IOCP의 구조(5)
 ### Released Thread List
-
+![Released Thread List](/image/Released Thread List.PNG)
 * 현재 작동중인 스레드의 리스트
 * 최대 스레드 수 이상은 들어갈수 없지만 어쩔수 없을때는 최대수를 넘을수 있다.
 * 동작을 완료하거나 스레드가 스스로 대기상태에 돌입하면 제거된다.
 ---
 ## IOCP의 구조(6)
 ### Paused Thread List
-
+![Paused Thread List](/image/Paused Thread List.PNG)
 * 현재 작동되다가 스스로 대기 상태에 빠진 스레드의 리스트
 * 대기 상태에서 다시 동작상태로 돌아가면 빠져나가게 된다.
 
