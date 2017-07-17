@@ -19,7 +19,6 @@ LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine//콜백함수
 );
 ```
 +++
-* lpOverlapped 구조체의 이벤트 핸들과 lpCompletionRoutine의 함수는 각각 다른 방식의 overlapped 모델에서 입출력 완료를 통보하는 방법으로 사용된다. 콜백함수가 우선된다.
 * lpNumberOfBytesSent: Msdn에서 이상한 내용을 찾았다.
 * Use NULL for this parameter if the lpOverlapped parameter is not NULL to avoid potentially erroneous results. This parameter can be NULL only if the lpOverlapped parameter is not NULL.
 ---
@@ -30,6 +29,8 @@ LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine//콜백함수
 * 하지만 메모리가 부족한 상황에서 커널이 사용하는 메모리 영역이 아니기 때문에 page교체가 일어날수 도 있다.
 * 그래서 이렇게 입출력이 일어나는 부분을 page교체가 일어나지 않도록 lock을 건다.
 * 하지만 이때 무조건 메모리의 page단위로 lock이 걸리기때문에 문제가 될 수 있다.
+* 프로세스당 페이지 교환을 막는 락을 걸수 있는 크기를 지정할수 있다.
+* SetProcessWorkingSetSize (사용해도 되는 건가?)
 +++
 ## Overlapped IO 특징
 * IO먼저 요청한 입출력이라고 해서 먼저 완료 되지 않는다.
