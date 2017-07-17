@@ -71,7 +71,7 @@ DWORD NumberOfConcurrentThreads // number of threads to execute concurrently
 ### IO Completion Queue
 ![IO Completion Queue](/image/IO Completion Queue.PNG)
 +++
-* 입출력이 완료된 IO의 결과를 저장하는 큐
+* 입출력이 완료된 IO의 결과의 정보를 저장하는 큐
 * 순서대로 전송길이, 관련소켓, Overlapped 구조체, 에러다.
 * 큐에서 결과를 받아오는 것 뿐만 아니라 보내는 것도 가능하다.
 * PostQueuedCompletionStatus 함수를 이용하면 된다.
@@ -109,7 +109,7 @@ struct SOCKETINFO
 
 ```
 +++
-* 물론 IOCP의 구조는 아니지만 대부분 이렇게 확장해서 사용한다.
+* 대부분 이렇게 확장해서 사용한다.
 * 보통 Overlapped 구조체를 사용해서 관련 정보를 한꺼번에 관리 한다.
 * 구조체를 만들어서 Overlapped 구조체를 맨 앞에 두면 포인터 캐스팅으로 내가 정의한 구조체에 접근 할수 있다.
 ---
@@ -149,3 +149,8 @@ struct SOCKETINFO
 ## 예제코드
 +++?gist=6ae3c1a35ed2bc9e1d31fefb024a36ac
 ---
+## 의문점들
+
+* page locking에 의해서 문제가 생기면 어떻게 해결하는가
+* Accept 함수는 그대로인데 ...
+*
