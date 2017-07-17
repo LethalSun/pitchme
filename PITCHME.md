@@ -20,7 +20,8 @@ LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine//콜백함수
 ```
 +++
 * lpOverlapped 구조체의 이벤트 핸들과 lpCompletionRoutine의 함수는 각각 다른 방식의 overlapped 모델에서 입출력 완료를 통보하는 방법으로 사용된다. 콜백함수가 우선된다.
-* lpNumberOfBytesSent: Msdn에서 이상한 내용을 찾았다. Use NULL for this parameter if the lpOverlapped parameter is not NULL to avoid potentially erroneous results. This parameter can be NULL only if the lpOverlapped parameter is not NULL.
+* lpNumberOfBytesSent: Msdn에서 이상한 내용을 찾았다.
+* Use NULL for this parameter if the lpOverlapped parameter is not NULL to avoid potentially erroneous results. This parameter can be NULL only if the lpOverlapped parameter is not NULL.
 ---
 ## Overlapped IO 특징
 * 다른 소켓 입출력과 다르게 사용자가 지정한 버퍼에 바로 데이터가 입력된다. 즉 커널이 관리하는 버퍼에서 어플리케이션이 사용하는 버퍼로 복사가 필요 없다.
