@@ -1,5 +1,3 @@
-
-
 # IOCP
 ---
 ## Overlapped IO
@@ -26,13 +24,24 @@
 * 즉 컨텍스트 교환 비용과 cpu의 이용율을 고려한 최대의 스레드개수를 정해놓고 스레드를 관리하면 cpu를 최대한 효율적으로 사용할수 있다.
 * 이것을 잘관리 해주는 것이 IOCP이다.
 ---
-## 스레드의 관리를 위한 IOCP의 구조(1)
+## 관련함수(1)
+### CreateIoCompletionPort
+```
+HANDLE CreateIoCompletionPort (
+HANDLE FileHandle, // handle to file
+HANDLE ExistingCompletionPort, // handle to I/O completion port
+ULONG_PTR CompletionKey, // completion key
+DWORD NumberOfConcurrentThreads // number of threads to execute concurrently
+);
+```
+---
+## IOCP의 구조(1)
 ### Device List
 //이미지
-* 키를 이용해서 어떤 디바이스의(여기서는 소켓) 입출력 이완료 되었는지를 알수 있도록 한 자료구조. 
+* 키를 이용해서 어떤 디바이스의(여기서는 소켓) 입출력 이완료 되었는지를 알수 있도록 한 자료구조.
 * 보통 CompletionKey는 소켓의 FD를 이용하거나 사용자가 정의한 구조체의 포인터를 이용한다.
 ---
-## 스레드의 관리를 위한 IOCP의 구조(2)
+## IOCP의 구조(2)
 ### IO Completion Queue
 //이미지
 * 입출력이 완료된 IO의 결과를 저장하는 큐
@@ -46,21 +55,36 @@
 * 보통 Overlapped 구조체를 사용해서 관련 정보를 한꺼번에 관리 한다.
 * 구조체를 만들어서 Overlapped 구조체를 맨 앞에 두면 포인터 캐스팅으로 내가 정의한 구조체에 접근 할수 있다.
 ---
-## 스레드의 관리를 위한 IOCP의 구조(3)
+## IOCP의 구조(3)
 ### Waiting Thread Queue(LIFO)
 
 * GetQueuedCompletionStatus 함수를 호출한 스레드가 들어가게 되는 큐
-* 큐라고 불리지만 실제로는 레지스터나 캐쉬, 메모리에 남아있는 정보를 계속 사용하는게 비용이 덜들기 때문에 가장 최근에 사용한 스레드를 계속 사용하기 위해서 LIFO로 동작한다. 
+* 큐라고 불리지만 실제로는 레지스터나 캐쉬, 메모리에 남아있는 정보를 계속 사용하는게 비용이 덜들기 때문에 가장 최근에 사용한 스레드를 계속 사용하기 위해서 LIFO로 동작한다.
 * WTQ에서 스레드는 기다리고 있다가 IO가 완료되면 GetQueuedCompletionStatus함수의 매개변수로 정보를 받아온다.
 +++
 
 * 하지만 아까 IOCP는 동시에 동작하는 스레드의 최대수를 제한한다고 했다.
 * 즉 처음에 설정해준 최대 스레드 개수를 넘지 않는 경우에만 대기 상태에서 빠져 나올수 있다.
 ---
-## 스레드의 관리를 위한 IOCP의 구조(5)
+## IOCP의 구조(5)
 ### Released Thread List
 
-* 
+* 현재 작동중인 스레드의 리스트
+* 최대 스레드 수 이상은 들어갈수 없지만 어쩔수 없을때는 최대수를 넘을수 있다.
+* 동작을 완료하거나 스레드가 스스로 대기상태에 돌입하면 제거된다.
 ---
-## 스레드의 관리를 위한 IOCP의 구조(6)
+## IOCP의 구조(6)
 ### Paused Thread List
+
+* 현재 작동되다가 스스로 대기 상태에 빠진 스레드의 리스트
+* 대기 상태에서 다시 동작상태로 돌아가면 빠져나가게 된다.
+
++++
+## 최대 스레드 수의 모호성
+
+* 최대 스레드수는 가능한한 지켜진다.
+* 만약 최대 스레드 개수 만큼 동작하다가 하나의 스레드가  PTL로 들어가면 WTQ에서 하나의 스레드가 깨어나게 되고 또 최대스레드 수만큼 동작하게 된다.
+* 이때 만약 PTL의 스레드가 동작하게 되면 다시 RTL로 돌아가게 되는데 이때 최대 개수를 초과 하게 된다.
+
+---
+
