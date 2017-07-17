@@ -45,7 +45,7 @@ DWORD NumberOfConcurrentThreads // number of threads to execute concurrently
 ---
 ## IOCP의 구조(1)
 ### Device List
-//이미지
+![GitHub Logo](/image/DeviceList.png)
 * 키를 이용해서 어떤 디바이스의(여기서는 소켓) 입출력 이완료 되었는지를 알수 있도록 한 자료구조.
 * 보통 CompletionKey는 소켓의 FD를 이용하거나 사용자가 정의한 구조체의 포인터를 이용한다.
 ---
