@@ -6,6 +6,22 @@
 * 하지만 Overlapped IO 는 입출력작업(네트워크 프로그래밍에서는 소켓)을 요청하고 다른 일을 처리할 수 있다.
 * 다른일을 처리하다 어떤방식으로(이벤트를 이용하거나 특정루틴을 실행하게하거나 IOCP를 이용해서) IO 가 완료되면 IO의 결과를 처리 하는 방식이다.
 ---
+## 관련함수(0)
+```C++
+int WSASend(
+SOCKET s,//해당 소켓
+LPWSABUF lpBuffers,//WSABUF구조체의 포인터
+DWORD dwBufferCount,//위 포인터에 딸린 구조체의 수
+LPDWORD lpNumberOfBytesSent,//보낸 바이트의 수를 받는 부분
+DWORD dwFlags,//옵션을 설정하는 플래그
+LPWSAOVERLAPPED lpOverlapped,//오버랩드 구조체의 포인터
+LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine//콜백함수
+);
+```
++++
+* lpOverlapped 구조체의 이벤트 핸들과 lpCompletionRoutine의 함수는 각각 다른 방식의 overlapped 모델에서 입출력 완료를 통보하는 방법으로 사용된다. 콜백함수가 우선된다.
+* lpNumberOfBytesSent: Msdn에서 이상한 내용을 찾았다. Use NULL for this parameter if the lpOverlapped parameter is not NULL to avoid potentially erroneous results. This parameter can be NULL only if the lpOverlapped parameter is not NULL.
+---
 ## Overlapped IO 특징
 * 다른 소켓 입출력과 다르게 사용자가 지정한 버퍼에 바로 데이터가 입력된다. 즉 커널이 관리하는 버퍼에서 어플리케이션이 사용하는 버퍼로 복사가 필요 없다.
 +++
@@ -28,7 +44,7 @@
 ---
 ## 관련함수(1)
 ### CreateIoCompletionPort
-```
+```c++
 HANDLE CreateIoCompletionPort (
 HANDLE FileHandle, // handle to file
 HANDLE ExistingCompletionPort, // handle to I/O completion port
@@ -39,9 +55,9 @@ DWORD NumberOfConcurrentThreads // number of threads to execute concurrently
 +++
 
 * FileHandle: IOCP에 연결할 소켓의 핸들 혹은 INVALID_HANDLE_VALUE 값을 넣으면 IOCP생성
-* ExistingCompletionPort: 생성된 IOCP 핸들을 넣는다.
-* CompletionKey: 소켓과 연결된 키
-* NumberOfConcurrentThreads: IOCP를 생성할때는 최대 실행 스레드수 연결할때는 0
+* ExistingCompletionPort: 생성된 IOCP 핸들을 넣는다. 생성시에는 null
+* CompletionKey: 소켓과 연결된 키 생성시에는 0
+* NumberOfConcurrentThreads: IOCP를 생성할때는 최대 실행 스레드수 0을 넣으면 cpu 개수 만큼 생성, 연결할때는 0
 ---
 ## IOCP의 구조(1)
 ### Device List
@@ -60,7 +76,7 @@ DWORD NumberOfConcurrentThreads // number of threads to execute concurrently
 ---
 ## 관련함수(2)
 ### GetQueuedCompletionStatus
-```
+```c++
 BOOL GetQueuedCompletionStatus(
 HANDLE CompletionPort, // handle to completion port
 LPDWORD lpNumberOfBytes, // bytes transferred
@@ -78,7 +94,7 @@ DWORD dwMilliseconds // optional timeout value
 * PostQueuedCompletionStatus 함수는 마지막 대기 시간을 제외한 인자로 되어있다.
 ---
 ### 확장 Overlapped 구조체
-```
+```c++
 struct SOCKETINFO
 {
 	OVERLAPPED overlapped;
