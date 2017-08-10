@@ -4,13 +4,13 @@
 #### std::string이란?
 * C++ 표준 라이브러리에서 문자열을 다루는 객체
 * 포함 헤더파일
-```C++
+```cpp
 #include <string>
 ```
 ---
 #### string 객체의 생성
 * 객체이므로 생성자를 이용해서 생성한다.
-```C++
+```{.cpp}
 string publisher("ButterworthHeinemann");//문자열 포인터를 이용해서 생성
 string bookName("Classical Field Theory");
 string copiedBookName(bookName);// 복사 생성자
@@ -23,17 +23,17 @@ string bookStore[3];// 스트링 객체의 배열
 * 즉 다른 스트림 객체를 이용해서도 가능 파일쓰기라던지
 * 만약에 printf같은 c의 함수를 사용한다면?
 * printf가 출력하는 것은 문자배열의 포인터를 이용하므로 포인터를 얻어오는 c_str()메소드를 사용하면 된다.
-```c++
+```cpp
 printf("%s", bookName.c_str());
 ```
 ---
 #### 문자열 삽입 삭제
 *  특정위치 바로 뒤에 문자열을 삽입한다.
-```c++
+```cpp
 bookName.insert(1,"3rd addition");//위치, 문자열
 ```
 * 문자열 삭제 특정 위치부터 몇게
-```c++
+```cpp
 bookName.erase(1, 13);//시작위치 갯수
 ```
 ---
