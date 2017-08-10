@@ -10,7 +10,7 @@
 ---
 #### string 객체의 생성
 * 객체이므로 생성자를 이용해서 생성한다.
-```{.cpp}
+```cpp
 string publisher("ButterworthHeinemann");//문자열 포인터를 이용해서 생성
 string bookName("Classical Field Theory");
 string copiedBookName(bookName);// 복사 생성자
@@ -39,7 +39,7 @@ bookName.erase(1, 13);//시작위치 갯수
 ---
 #### 연산자를 이용한 문자열 추가
 * +를 이용해서 두문자열을 연결한다.
-```c++
+```cpp
 string publisher("ButterworthHeinemann");//문자열 포인터를 이용해서 생성
 string bookName("Classical Field Theory");
 bookName += publisher;
@@ -47,7 +47,7 @@ bookName += publisher;
 ---
 #### 길이
 * 두 메소드는 같은 역할을 한다.
-```c++
+```cpp
 string bookName = "hello world!";
 bookName.length();
 bookName.size();
@@ -56,7 +56,7 @@ bookName.size();
 #### 메모리 확인
 * 첫번째는 재할당하지 않고 넣을수 있는 최대 용량
 * 두번째는 메모리를 다 사용했을때 넣을수 있는 최대 용량
-```c++
+```cpp
 string bookName = "hello world!";
 bookName.capacity();
 bookName.max_size();
@@ -64,7 +64,7 @@ bookName.max_size();
 ---
 #### 특정위치의 문자 확인
 * 특정위치의 문자를 반환한다.
-```c++
+```cpp
 string bookName = "hello world!";
 bookName.at(0); // 'h'
 bookName.at(1); // 'e'
@@ -73,14 +73,14 @@ bookName.at(1); // 'e'
 #### 특정 문자의 검색
 * 특정 문자열이 발견된 첫번째 위치를 반환한다.
 * 없다면 string::npos 를 반환
-```c++
+```cpp
 string base = "hello world!";
 base.find("world!");
 ```
 ---
 #### 문자열 비교
 * compare 메소드 사용
-```c++
+```cpp
 string a = "I am string one!";
 string b = "string ";
 if (a.compare(b) == 0)
@@ -99,7 +99,7 @@ else if (a.compare(b) > 0)
 ---
 #### 원하는 문자열을 특정 문자열로 대체
 * replace 메소드 사용
-```c++
+```cpp
 std::string replaceString(std::string subject, const std::string &search, const std::string &replace)
  {
     size_t pos = 0;
@@ -114,7 +114,7 @@ std::string replaceString(std::string subject, const std::string &search, const 
 ---
 #### 타입 변환
 * C++11부터 생김
-```c++
+```cpp
 // int ---> string
 string s;
 int i = 10;
@@ -128,7 +128,7 @@ i = std::stoi(s);
 #### 부분 문자열 추출
 
 * substr 메소드 사용
-```c++
+```cpp
 std::string str="We think in generalities, but we live in details.";
 std::string str2 = str.substr (3,5);// "think"
 std::size_t pos = str.find("live");// position of "live" in str
